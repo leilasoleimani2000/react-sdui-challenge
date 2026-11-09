@@ -9,7 +9,6 @@ export const carFormSchema: FormSchema = {
       props: {
         color: '#000000',
         placeholder: 'برند ماشین را وارد کنید',
-        size: 'large',
         type: 'text',
       },
       style: { borderRadius: '5px', margin: '10px 0', padding: '8px' },
