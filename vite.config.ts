@@ -9,7 +9,7 @@ export default defineConfig({
     environment: 'jsdom',
     // Lets tests use describe/it/expect without importing them each time.
     globals: true,
-    // Runs before every test file (registers jest-dom matchers, starts the mock server).
+    // Runs before every test file (registers the jest-dom matchers).
     setupFiles: './src/test/setup.ts',
   },
 })
