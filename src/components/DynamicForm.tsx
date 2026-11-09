@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useForm, type FieldValues } from 'react-hook-form'
 import type { FormField } from '../types/form'
-import { getRules } from '../utils/getRules'
 import type { SubmitResult } from '../api/forms'
 import { toFormData } from '../utils/toFormData'
+import FileControl from './fields/FileControl'
+import InputControl from './fields/InputControl'
+import SelectControl from './fields/SelectControl'
+import TextareaControl from './fields/TextareaControl'
 
 const SUCCESS_MESSAGE_MS = 5000
 
@@ -21,6 +24,8 @@ function DynamicForm({ fields, onSubmit }: Props) {
         formState: { errors, isSubmitting },
     } = useForm()
     const [succeeded, setSucceeded] = useState(false)
+    // Shown when sending fails completely (for example there is no network).
+    const [submitError, setSubmitError] = useState('')
 
     useEffect(() => {
         if (!succeeded) return
@@ -30,8 +35,15 @@ function DynamicForm({ fields, onSubmit }: Props) {
 
     const submit = async (values: FieldValues) => {
         setSucceeded(false)
+        setSubmitError('')
 
-        const result = await onSubmit(toFormData(values))
+        let result: SubmitResult
+        try {
+            result = await onSubmit(toFormData(values))
+        } catch {
+            setSubmitError('ارسال فرم با خطا مواجه شد. دوباره تلاش کنید')
+            return
+        }
 
         if (result.success) {
             reset()
@@ -50,60 +62,24 @@ function DynamicForm({ fields, onSubmit }: Props) {
                 <div key={field.name} className="field">
                     <label htmlFor={field.name}>{field.label}</label>
 
-                    {field.type === 'input' && (
-                        <input
-                            id={field.name}
-                            type={field.props.type}
-                            placeholder={field.props.placeholder}
-                            min={field.props.min}
-                            max={field.props.max}
-                            style={field.style}
-                            {...register(field.name, getRules(field))}
-                        />
-                    )}
-
+                    {field.type === 'input' && <InputControl field={field} register={register} />}
                     {field.type === 'textarea' && (
-                        <textarea
-                            id={field.name}
-                            placeholder={field.props.placeholder}
-                            rows={field.props.rows}
-                            cols={field.props.cols}
-                            style={field.style}
-                            {...register(field.name, getRules(field))}
-                        />
+                        <TextareaControl field={field} register={register} />
                     )}
-
-                    {field.type === 'select' && (
-                        <select
-                            id={field.name}
-                            style={field.style}
-                            {...register(field.name, getRules(field))}
-                        >
-                            <option value="">انتخاب کنید</option>
-                            {field.props.options.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-
-                    {field.type === 'file' && (
-                        <input
-                            id={field.name}
-                            type="file"
-                            accept={field.props.accept}
-                            multiple={field.props.multiple}
-                            style={field.style}
-                            {...register(field.name, getRules(field))}
-                        />
-                    )}
+                    {field.type === 'select' && <SelectControl field={field} register={register} />}
+                    {field.type === 'file' && <FileControl field={field} register={register} />}
 
                     {errors[field.name] && (
                         <p role="alert">{String(errors[field.name]?.message)}</p>
                     )}
                 </div>
             ))}
+
+            {submitError && (
+                <p role="alert" className="form-error">
+                    {submitError}
+                </p>
+            )}
 
             <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'در حال ارسال…' : 'ارسال'}

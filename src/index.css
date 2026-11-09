@@ -82,6 +82,21 @@ body {
   font-size: 0.875rem;
 }
 
+/* Text sizes picked by the `size` prop of an input in the form schema. */
+.field input[data-size='medium'] {
+  font-size: 1rem;
+}
+
+.field input[data-size='large'] {
+  font-size: 1.25rem;
+}
+
+/* A problem with sending the form itself, not with one field. */
+.form-error {
+  margin: 0;
+  color: var(--color-danger);
+}
+
 .form button {
   align-self: flex-start;
   padding: var(--space) calc(var(--space) * 3);
