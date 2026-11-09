@@ -1,22 +1,15 @@
-import { carFormSchema } from '../mocks/carFormSchema'
 import type { FormSchema } from '../types/form'
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+export type SubmitResult = { success: boolean; errors: Record<string, string> }
 
 export async function getForm(): Promise<FormSchema> {
-  await wait(300)
-  return carFormSchema
+  const response = await fetch('/api/forms/car')
+  if (!response.ok) throw new Error('Failed to load the form')
+  return response.json()
 }
 
-export async function submitForm(
-    data: FormData,
-): Promise<{ success: boolean; errors: Record<string, string> }> {
-  await wait(500)
-
-  // A brand of "error" simulates a server error.
-  if (data.get('brand') === 'error') {
-    return { success: false, errors: { brand: 'این برند مجاز نیست' } }
-  }
-
-  return { success: true, errors: {} }
+export async function submitForm(data: FormData): Promise<SubmitResult> {
+  const response = await fetch('/api/forms/car', { method: 'POST', body: data })
+  if (!response.ok) throw new Error('Failed to submit the form')
+  return response.json()
 }
