@@ -27,6 +27,8 @@ function DynamicForm({ fields, onSubmit }: Props) {
     // Shown when sending fails completely (for example there is no network).
     const [submitError, setSubmitError] = useState('')
 
+    // Hides the success message after a while. The cleanup clears the timer if the form is
+    // sent again or removed, so an old timer never hides a newer message.
     useEffect(() => {
         if (!succeeded) return
         const timer = setTimeout(() => setSucceeded(false), SUCCESS_MESSAGE_MS)
@@ -51,6 +53,7 @@ function DynamicForm({ fields, onSubmit }: Props) {
             return
         }
 
+        // Show each server error under its own field.
         for (const [name, message] of Object.entries(result.errors)) {
             setError(name, { message })
         }
