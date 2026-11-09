@@ -37,9 +37,9 @@ function DynamicForm({ fields, onSubmit }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit(submit)} noValidate>
+        <form className="form" onSubmit={handleSubmit(submit)} noValidate>
             {fields.map((field) => (
-                <div key={field.name} style={field.style}>
+                <div key={field.name} className="field">
                     <label htmlFor={field.name}>{field.label}</label>
 
                     {field.type === 'input' && (
@@ -49,6 +49,7 @@ function DynamicForm({ fields, onSubmit }: Props) {
                             placeholder={field.props.placeholder}
                             min={field.props.min}
                             max={field.props.max}
+                            style={field.style}
                             {...register(field.name, getRules(field))}
                         />
                     )}
@@ -59,12 +60,17 @@ function DynamicForm({ fields, onSubmit }: Props) {
                             placeholder={field.props.placeholder}
                             rows={field.props.rows}
                             cols={field.props.cols}
+                            style={field.style}
                             {...register(field.name, getRules(field))}
                         />
                     )}
 
                     {field.type === 'select' && (
-                        <select id={field.name} {...register(field.name, getRules(field))}>
+                        <select
+                            id={field.name}
+                            style={field.style}
+                            {...register(field.name, getRules(field))}
+                        >
                             <option value="">انتخاب کنید</option>
                             {field.props.options.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -80,6 +86,7 @@ function DynamicForm({ fields, onSubmit }: Props) {
                             type="file"
                             accept={field.props.accept}
                             multiple={field.props.multiple}
+                            style={field.style}
                             {...register(field.name, getRules(field))}
                         />
                     )}
