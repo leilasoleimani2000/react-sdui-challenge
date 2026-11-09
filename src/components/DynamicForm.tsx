@@ -1,24 +1,43 @@
+import { useState } from 'react'
 import { useForm, type FieldValues } from 'react-hook-form'
 import type { FormField } from '../types/form'
 import { getRules } from '../utils/getRules'
+import type { SubmitResult } from '../api/forms'
+import { toFormData } from '../utils/toFormData'
 
 interface Props {
     fields: FormField[]
+    onSubmit: (data: FormData) => Promise<SubmitResult>
 }
 
-function DynamicForm({ fields }: Props) {
+function DynamicForm({ fields, onSubmit }: Props) {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        setError,
+        reset,
+        formState: { errors, isSubmitting },
     } = useForm()
+    const [succeeded, setSucceeded] = useState(false)
 
-    const onSubmit = (values: FieldValues) => {
-        console.log(values)
+    const submit = async (values: FieldValues) => {
+        setSucceeded(false)
+
+        const result = await onSubmit(toFormData(values))
+
+        if (result.success) {
+            reset()
+            setSucceeded(true)
+            return
+        }
+
+        for (const [name, message] of Object.entries(result.errors)) {
+            setError(name, { message })
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form onSubmit={handleSubmit(submit)} noValidate>
             {fields.map((field) => (
                 <div key={field.name} style={field.style}>
                     <label htmlFor={field.name}>{field.label}</label>
@@ -71,7 +90,11 @@ function DynamicForm({ fields }: Props) {
                 </div>
             ))}
 
-            <button type="submit">ارسال</button>
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'در حال ارسال…' : 'ارسال'}
+            </button>
+
+            {succeeded && <p role="status">فرم با موفقیت ارسال شد</p>}
         </form>
     )
 }

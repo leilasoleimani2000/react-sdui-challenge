@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getForm } from './api/forms'
+import { getForm, submitForm } from './api/forms'
 import type { FormSchema } from './types/form'
 import DynamicForm from './components/DynamicForm'
 
@@ -20,7 +20,7 @@ function App() {
             <h1>Dynamic Form Builder</h1>
             {loading && <p>در حال بارگذاری…</p>}
             {error && <p>{error}</p>}
-            {form && <DynamicForm fields={form.fields} />}
+            {form && <DynamicForm fields={form.fields} onSubmit={submitForm} />}
         </main>
     )
 }
