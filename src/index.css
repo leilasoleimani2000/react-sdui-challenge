@@ -11,6 +11,7 @@
   --color-border: #d1d5db;
   --color-primary: #2563eb;
   --color-danger: #dc2626;
+  --color-success: #16a34a;
 
   --radius: 5px;
   --space: 8px;
@@ -95,4 +96,24 @@ body {
 .form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/*
+ * Success message. It is fixed to the top of the window so it is seen even when the
+ * page is scrolled, and it hides itself (see DynamicForm).
+ */
+.toast {
+  position: fixed;
+  inset-block-start: calc(var(--space) * 3);
+  inset-inline: calc(var(--space) * 3);
+  margin-inline: auto;
+  max-inline-size: 400px;
+  margin-block: 0;
+  padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius);
+  background: #f0fdf4;
+  color: var(--color-success);
+  font-weight: 600;
+  text-align: center;
 }

@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, type FieldValues } from 'react-hook-form'
 import type { FormField } from '../types/form'
 import { getRules } from '../utils/getRules'
 import type { SubmitResult } from '../api/forms'
 import { toFormData } from '../utils/toFormData'
+
+const SUCCESS_MESSAGE_MS = 5000
 
 interface Props {
     fields: FormField[]
@@ -19,6 +21,12 @@ function DynamicForm({ fields, onSubmit }: Props) {
         formState: { errors, isSubmitting },
     } = useForm()
     const [succeeded, setSucceeded] = useState(false)
+
+    useEffect(() => {
+        if (!succeeded) return
+        const timer = setTimeout(() => setSucceeded(false), SUCCESS_MESSAGE_MS)
+        return () => clearTimeout(timer)
+    }, [succeeded])
 
     const submit = async (values: FieldValues) => {
         setSucceeded(false)
@@ -101,7 +109,11 @@ function DynamicForm({ fields, onSubmit }: Props) {
                 {isSubmitting ? 'در حال ارسال…' : 'ارسال'}
             </button>
 
-            {succeeded && <p role="status">فرم با موفقیت ارسال شد</p>}
+            {succeeded && (
+                <p role="status" className="toast">
+                    فرم با موفقیت ارسال شد
+                </p>
+            )}
         </form>
     )
 }
