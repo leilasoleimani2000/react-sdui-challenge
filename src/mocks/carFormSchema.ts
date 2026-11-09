@@ -1,6 +1,6 @@
 import type { FormSchema } from '../types/form'
 
-// README sample response; only `validation` is added by us.
+// README sample response; only `validation` is added by me.
 export const carFormSchema: FormSchema = {
   fields: [
     {
